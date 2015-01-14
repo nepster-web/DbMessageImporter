@@ -2,7 +2,7 @@
 DbMessageImporter Комнонент принимает массив данных с переводами и импортирует в базу данных.
 
 Если Вы используете yii\i18n\DbMessageSource в своем проекте, то с помощью данного компонента
-можно без труда перенести данные (например из файла) в специальные таблицы переводов.
+можно без труда переносить и обновлять данные переводов (например из файлов) в специальные таблицы.
 
 
 Установка
@@ -51,7 +51,7 @@ php composer.phar require nepster-web/yii2-DbMessageImporter: dev-master
   ~~~
 
 
-  Пример обновление базы данных переводов:
+  Пример обновления базы данных переводов:
 
   file.yml
   ~~~
@@ -65,6 +65,7 @@ php composer.phar require nepster-web/yii2-DbMessageImporter: dev-master
       en: 'Login'
   ~~~
 
+  run
   ~~~
   use nepster\yii2components\DbMessageImporter;
   ...

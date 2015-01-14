@@ -12,7 +12,7 @@ use yii\db\Connection;
  * DbMessageImporter Комнонент принимает массив данных с переводами и импортирует в базу данных.
  *
  * Если Вы используете yii\i18n\DbMessageSource в своем проекте, то с помощью данного компонента
- * можно без труда перенести данные (например из файла) в специальные таблицы переводов.
+ * можно без труда переносить и обновлять данные переводов (например из файлов) в специальные таблицы.
  *
  * Пример валидного массива с данными:
  *
@@ -36,8 +36,7 @@ use yii\db\Connection;
  *   )
  * ~~~
  *
- *
- * Пример использования:
+ * Пример обновления базы данных переводов:
  *
  * file.yml
  * ~~~
@@ -51,28 +50,28 @@ use yii\db\Connection;
  *     en: 'Login'
  * ~~~
  *
+ * run
  * ~~~
- * nepster\yii2components\DbMessageImporter;
+ * use nepster\yii2components\DbMessageImporter;
  * ...
  * $yaml = Yaml::parse(file_get_contents('/path/to/file.yml'));
  * $DbMessageImporter = new DbMessageImporter($yaml);
  * $DbMessageImporter->setMessageTable('{{%language_messages}}');
  * $DbMessageImporter->setSourceMessageTable('{{%language_source_messages}}');
- * $DbMessageImporter->update();
+ * $DbMessageImporter->update(); // return true or false
  * ~~~
- *
  */
 class DbMessageImporter
 {
     /**
      * @var string Таблица с переводами
      */
-    private $_messageTable = '{{%language_messages}}';
+    private $_messageTable = '{{%messages}}';
 
     /**
      * @var string Таблица с константами для перевода
      */
-    private $_sourceMessageTable = '{{%language_source_messages}}';
+    private $_sourceMessageTable = '{{%source_messages}}';
 
     /**
      * @var array Массив данных
@@ -88,7 +87,6 @@ class DbMessageImporter
      * @var \Exception
      */
     private $_errors;
-
 
     /**
      * Конструктор принимает массив данных

@@ -1,5 +1,5 @@
 {
-    "name": "nepster-web/yii2-DbMessageImporter",
+    "name": "nepster-web/yii2-db-message-importer",
     "description": "DbMessageImporter Комнонент принимает массив данных с переводами и импортирует в базу данных.",
     "type": "yii2-component",
     "keywords": ["yii2", "yii 2", "component", "db message importer"],
@@ -11,8 +11,8 @@
         }
     ],
     "support": {
-        "issues": "https://github.com/nepster-web/yii2-DbMessageImporter",
-        "source": "https://github.com/nepster-web/yii2-DbMessageImporter/issues"
+        "issues": "https://github.com/nepster-web/yii2-db-message-importer",
+        "source": "https://github.com/nepster-web/yii2-db-message-importer/issues"
     },
     "require": {
         "yiisoft/yii2": "*"
