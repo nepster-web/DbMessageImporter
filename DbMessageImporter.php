@@ -1,6 +1,6 @@
 <?php
 
-namespace common\components;
+namespace nepster\yii2components;
 
 use Yii;
 use yii\db\Query;
@@ -52,6 +52,8 @@ use yii\db\Connection;
  * ~~~
  *
  * ~~~
+ * nepster\yii2components\DbMessageImporter;
+ * ...
  * $yaml = Yaml::parse(file_get_contents('/path/to/file.yml'));
  * $DbMessageImporter = new DbMessageImporter($yaml);
  * $DbMessageImporter->setMessageTable('{{%language_messages}}');

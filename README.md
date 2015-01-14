@@ -13,13 +13,13 @@ DbMessageImporter Комнонент принимает массив данны�
 Запустите в консоле
 
 ```
-php composer.phar require nepster-web/Yii2-DbMessageImporter: dev-master
+php composer.phar require nepster-web/yii2-DbMessageImporter: dev-master
 ```
 
 или добавьте
 
 ```
-"nepster-web/Yii2-DbMessageImporter": "dev-master"
+"nepster-web/yii2-DbMessageImporter": "dev-master"
 ```
 
 в файл `composer.json` в секцию require.
@@ -51,7 +51,7 @@ php composer.phar require nepster-web/Yii2-DbMessageImporter: dev-master
   ~~~
 
 
-  Пример использования:
+  Пример обновление базы данных переводов:
 
   file.yml
   ~~~
@@ -66,6 +66,8 @@ php composer.phar require nepster-web/Yii2-DbMessageImporter: dev-master
   ~~~
 
   ~~~
+  use nepster\yii2components\DbMessageImporter;
+  ...
   $yaml = Yaml::parse(file_get_contents('/path/to/file.yml'));
   $DbMessageImporter = new DbMessageImporter($yaml);
   $DbMessageImporter->setMessageTable('{{%language_messages}}');
