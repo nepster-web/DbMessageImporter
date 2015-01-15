@@ -104,7 +104,7 @@ php composer.phar require nepster-web/yii2-db-message-importer: dev-master
        * @var array Файлы переводов
        */
       private $transtaleYmlFiles = [
-          '@frontend/modules/markets/translations/markets.yml'
+          '@frontend/modules/mymodule/myfile.yml'
       ];
 
       /**
