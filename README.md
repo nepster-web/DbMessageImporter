@@ -13,13 +13,13 @@ DbMessageImporter Комнонент принимает массив данны�
 Запустите в консоле
 
 ```
-php composer.phar require nepster-web/yii2-DbMessageImporter: dev-master
+php composer.phar require nepster-web/yii2-db-message-importer: dev-master
 ```
 
 или добавьте
 
 ```
-"nepster-web/yii2-DbMessageImporter": "dev-master"
+"nepster-web/yii2-db-message-importer": "dev-master"
 ```
 
 в файл `composer.json` в секцию require.
