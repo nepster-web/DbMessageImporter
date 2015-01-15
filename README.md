@@ -75,3 +75,62 @@ php composer.phar require nepster-web/yii2-db-message-importer: dev-master
   $DbMessageImporter->setSourceMessageTable('{{%language_source_messages}}');
   $DbMessageImporter->update(); // return true or false
   ~~~
+
+
+
+
+  На практике
+  -----------
+  Можно реализовать консольную команду, которая используя данный компонент будет обновлять базу данных с переводами.
+
+  ...
+  <?php
+
+  namespace console\controllers;
+
+  use nepster\yii2components\DbMessageImporter;
+  use Symfony\Component\Yaml\Yaml;
+  use yii\helpers\Console;
+  use yii\log\Logger;
+  use Yii;
+
+  /**
+   * DB Translater
+   */
+  class TranslateController extends \yii\console\Controller
+  {
+      /**
+       * @var array Файлы переводов
+       */
+      private $transtaleYmlFiles = [
+          '@frontend/modules/markets/translations/markets.yml'
+      ];
+
+      /**
+       * Обновить базу данных переводов
+       */
+      public function actionUpdate()
+      {
+          foreach ($this->transtaleYmlFiles as &$file) {
+              if (is_string($file)) {
+                  $filePath = Yii::getAlias($file);
+                  $content = @file_get_contents($filePath);
+                  try {
+                      $yaml = Yaml::parse($content);
+                      $DbMessageImporter = new DbMessageImporter($yaml);
+                      $DbMessageImporter->setMessageTable('{{%language_messages}}');
+                      $DbMessageImporter->setSourceMessageTable('{{%language_source_messages}}');
+                      $result = $DbMessageImporter->update();
+                      if ($result) {
+                          $this->stdout("SUCCESS" . PHP_EOL . $filePath . PHP_EOL . PHP_EOL, Console::FG_GREEN);
+                      } else {
+                          $this->stdout("FAIL: not update" . PHP_EOL . $filePath . PHP_EOL . PHP_EOL, Console::FG_RED);
+                      }
+                  } catch (\Exception $e) {
+                      $this->stdout("FAIL: YML error" . PHP_EOL . $filePath . PHP_EOL . PHP_EOL, Console::FG_RED);
+                  }
+              }
+          }
+      }
+  }
+  ~~~
