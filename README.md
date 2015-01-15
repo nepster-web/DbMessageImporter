@@ -81,9 +81,10 @@ php composer.phar require nepster-web/yii2-db-message-importer: dev-master
 
   На практике
   -----------
+  
   Можно реализовать консольную команду, которая используя данный компонент будет обновлять базу данных с переводами.
 
-  ...
+  ~~~
   <?php
 
   namespace console\controllers;
