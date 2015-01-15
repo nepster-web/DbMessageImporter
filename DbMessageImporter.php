@@ -51,7 +51,7 @@ use yii\db\Connection;
  * ~~~
  *
  * run
- * ~~~
+ * ```php
  * use nepster\yii2components\DbMessageImporter;
  * ...
  * $yaml = Yaml::parse(file_get_contents('/path/to/file.yml'));
@@ -59,7 +59,7 @@ use yii\db\Connection;
  * $DbMessageImporter->setMessageTable('{{%language_messages}}');
  * $DbMessageImporter->setSourceMessageTable('{{%language_source_messages}}');
  * $DbMessageImporter->update(); // return true or false
- * ~~~
+ * ```
  */
 class DbMessageImporter
 {

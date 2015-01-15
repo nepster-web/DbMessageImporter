@@ -66,7 +66,7 @@ php composer.phar require nepster-web/yii2-db-message-importer: dev-master
   ~~~
 
   run
-  ~~~
+```php
   use nepster\yii2components\DbMessageImporter;
   ...
   $yaml = Yaml::parse(file_get_contents('/path/to/file.yml'));
@@ -74,7 +74,7 @@ php composer.phar require nepster-web/yii2-db-message-importer: dev-master
   $DbMessageImporter->setMessageTable('{{%language_messages}}');
   $DbMessageImporter->setSourceMessageTable('{{%language_source_messages}}');
   $DbMessageImporter->update(); // return true or false
-  ~~~
+```
 
 
 
@@ -84,7 +84,7 @@ php composer.phar require nepster-web/yii2-db-message-importer: dev-master
 
   Можно реализовать консольную команду, которая используя данный компонент будет обновлять базу данных с переводами.
 
-  ~~~
+```php
   <?php
 
   namespace console\controllers;
@@ -134,4 +134,4 @@ php composer.phar require nepster-web/yii2-db-message-importer: dev-master
           }
       }
   }
-  ~~~
+```
