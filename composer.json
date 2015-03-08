@@ -1,5 +1,5 @@
 {
-    "name": "nepster-web/yii2-message-importer",
+    "name": "nepster-web/yii2-messages-importer",
     "description": "Компонент MessageImporter импортирует данные переводов в базу данных или php файлы.",
     "type": "yii2-extension",
     "keywords": ["yii2", "yii 2", "component", "message importer"],
