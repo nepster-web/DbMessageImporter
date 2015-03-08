@@ -1,137 +1,75 @@
-# DbMessageImporter
-DbMessageImporter Комнонент принимает массив данных с переводами и импортирует в базу данных.
+# Yii2 MESSAGES IMPORTER
+Комнонент ипортирует данные переводов в базу данных или php файлы.
 
-Если Вы используете yii\i18n\DbMessageSource в своем проекте, то с помощью данного компонента
-можно без труда переносить и обновлять данные переводов (например из файлов) в специальные таблицы.
+**Внимание**
 
+Данный пакет был создан в личных целях для облегчения установки персональных модулей и расширений на базе Yii2.
 
-Установка
----------
+## Установка
 
 Предпочтительный способ установки этого виджета через [composer](http://getcomposer.org/download/).
 
 Запустите в консоле
 
 ```
-php composer.phar require nepster-web/yii2-db-message-importer: dev-master
+php composer.phar require --prefer-dist nepster-web/yii2-messages-importer "*"
 ```
 
 или добавьте
 
 ```
-"nepster-web/yii2-db-message-importer": "dev-master"
+"nepster-web/yii2-messages-importer": "*"
 ```
 
 в файл `composer.json` в секцию require.
 
 
-Использование
--------------
+## Настройка
 
-Пример валидного массива с данными:
+Необходимо добавить в файл конфигурации консольного приложения следующую настройку:
 
-  ~~~
-     Array
-     (
-        [users.main] => Array
-            (
-                [SIGNUP] => Array
-                    (
-                        [ru] => Регистрация
-                        [en] => Signup
-                    )
-
-                [SIGNIN] => Array
-                    (
-                        [ru] => Вход
-                        [en] => Login
-                    )
-            )
-     )
-  ~~~
-
-
-  Пример обновления базы данных переводов:
-
-  file.yml
-  ~~~
-  # Категория users.main
-  "users.main":
-    "SIGNUP":
-      ru: 'Регистрация'
-      en: 'Signup'
-    "SIGNIN":
-      ru: 'Вход'
-      en: 'Login'
-  ~~~
-
-  run
 ```php
-  use nepster\yii2components\DbMessageImporter;
-  ...
-  $yaml = Yaml::parse(file_get_contents('/path/to/file.yml'));
-  $DbMessageImporter = new DbMessageImporter($yaml);
-  $DbMessageImporter->setMessageTable('{{%language_messages}}');
-  $DbMessageImporter->setSourceMessageTable('{{%language_source_messages}}');
-  $DbMessageImporter->update(); // return true or false
+'controllerMap' => [
+    ...
+    'translate' => [
+        'class' => 'nepster\messagesimporter\Translate',
+        'YmlFiles' => [
+            '@app/languages/users.yml',
+        ],
+        'config' => [
+            'file' => [
+                'translatePath' => '@app/messages'
+            ],
+            'db' => [
+                'messageTable' => '{{%language_messages}}',
+                'sourceMessageTable' => '{{%language_source_messages}}',
+                'connection' => 'db',
+            ]
+        ],
+    ],
+],
 ```
 
+## Запуск
 
+```
+yii translate --type=db
+```
 
+## Пример users.yml
 
-На практике
------------
-
-  Можно реализовать консольную команду, которая используя данный компонент будет обновлять базу данных с переводами.
-
-```php
-  <?php
-
-  namespace console\controllers;
-
-  use nepster\yii2components\DbMessageImporter;
-  use Symfony\Component\Yaml\Yaml;
-  use yii\helpers\Console;
-  use yii\log\Logger;
-  use Yii;
-
-  /**
-   * DB Translater
-   */
-  class TranslateController extends \yii\console\Controller
-  {
-      /**
-       * @var array Файлы переводов
-       */
-      private $transtaleYmlFiles = [
-          '@frontend/modules/mymodule/myfile.yml'
-      ];
-
-      /**
-       * Обновить базу данных переводов
-       */
-      public function actionUpdate()
-      {
-          foreach ($this->transtaleYmlFiles as &$file) {
-              if (is_string($file)) {
-                  $filePath = Yii::getAlias($file);
-                  $content = @file_get_contents($filePath);
-                  try {
-                      $yaml = Yaml::parse($content);
-                      $DbMessageImporter = new DbMessageImporter($yaml);
-                      $DbMessageImporter->setMessageTable('{{%language_messages}}');
-                      $DbMessageImporter->setSourceMessageTable('{{%language_source_messages}}');
-                      $result = $DbMessageImporter->update();
-                      if ($result) {
-                          $this->stdout("SUCCESS" . PHP_EOL . $filePath . PHP_EOL . PHP_EOL, Console::FG_GREEN);
-                      } else {
-                          $this->stdout("FAIL: not update" . PHP_EOL . $filePath . PHP_EOL . PHP_EOL, Console::FG_RED);
-                      }
-                  } catch (\Exception $e) {
-                      $this->stdout("FAIL: YML error" . PHP_EOL . $filePath . PHP_EOL . PHP_EOL, Console::FG_RED);
-                  }
-              }
-          }
-      }
-  }
+```
+"users":
+  "USERNAME":
+    ru: 'Логин'
+    en: 'Username'
+  "EMAIL":
+    ru: 'E-MAIL'
+    en: 'E-MAIL'
+  "PHONE":
+    ru: 'Телефон'
+    en: 'Phone'
+  "PASSWORD":
+    ru: 'Пароль'
+    en: 'Password'
 ```

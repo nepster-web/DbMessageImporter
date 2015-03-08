@@ -1,117 +1,41 @@
 <?php
 
-namespace nepster\yii2components;
+namespace nepster\messagesimporter;
 
-use Yii;
-use yii\db\Query;
 use yii\base\InvalidParamException;
 use yii\db\Connection;
-
+use yii\db\Query;
+use Yii;
 
 /**
- * DbMessageImporter Комнонент принимает массив данных с переводами и импортирует в базу данных.
- *
- * Если Вы используете yii\i18n\DbMessageSource в своем проекте, то с помощью данного компонента
- * можно без труда переносить и обновлять данные переводов (например из файлов) в специальные таблицы.
- *
- * Пример валидного массива с данными:
- *
- * ~~~
- *  Array
- *   (
- *       [users.main] => Array
- *           (
- *               [SIGNUP] => Array
- *                   (
- *                       [ru] => Регистрация
- *                       [en] => Signup
- *                   )
- *
- *               [SIGNIN] => Array
- *                   (
- *                       [ru] => Вход
- *                       [en] => Login
- *                   )
- *           )
- *   )
- * ~~~
- *
- * Пример обновления базы данных переводов:
- *
- * file.yml
- * ~~~
- * # Категория users.main
- * "users.main":
- *   "SIGNUP":
- *     ru: 'Регистрация'
- *     en: 'Signup'
- *   "SIGNIN":
- *     ru: 'Вход'
- *     en: 'Login'
- * ~~~
- *
- * run
- * ```php
- * use nepster\yii2components\DbMessageImporter;
- * ...
- * $yaml = Yaml::parse(file_get_contents('/path/to/file.yml'));
- * $DbMessageImporter = new DbMessageImporter($yaml);
- * $DbMessageImporter->setMessageTable('{{%language_messages}}');
- * $DbMessageImporter->setSourceMessageTable('{{%language_source_messages}}');
- * $DbMessageImporter->update(); // return true or false
- * ```
+ * DbMessageImporter импортирует данные переводов в базу данных
  */
 class DbMessageImporter
 {
     /**
      * @var string Таблица с переводами
      */
-    private $_messageTable = '{{%messages}}';
+    private $_messageTable;
 
     /**
      * @var string Таблица с константами для перевода
      */
-    private $_sourceMessageTable = '{{%source_messages}}';
+    private $_sourceMessageTable;
 
     /**
-     * @var array Массив данных
-     */
-    private $_data;
-
-    /**
-     * @var yii\db\Connection
+     * @var \yii\db\Connection
      */
     private $_db;
 
     /**
-     * @var \Exception
+     * @var bool
      */
-    private $_errors;
+    private $_update;
 
     /**
-     * Конструктор принимает массив данных
-     * Проверяет валидность формата
+     * Init
      */
-    public function __construct(array $data)
-    {
-        foreach ($data as &$messages) {
-            if (!is_array($messages)) {
-                throw new InvalidParamException('Incorrect array: $messages must be array');
-            }
-            foreach ($messages as &$message) {
-                if (!is_array($message)) {
-                    throw new InvalidParamException('Incorrect array: $message must be array');
-                }
-            }
-        }
-        $this->init();
-        $this->_data = $data;
-    }
-
-    /**
-     * Инициализация
-     */
-    public function init()
+    public function __construct()
     {
         $this->_db = Yii::$app->db;
     }
@@ -137,29 +61,32 @@ class DbMessageImporter
     /**
      * Соединение с базой данных
      */
-    public function setConnection(Connection $connection)
+    public function setConnection($connection)
     {
-        $this->_db = $connection;
+        if (Yii::$app->$connection instanceof Connection) {
+            $this->_db = Yii::$app->$connection;
+        }
     }
 
     /**
-     * Возвращает ошибки при откате транзакции
+     * Устанавливает флаг, при котором переводы будут обновляться
+     * @param bool $update
      */
-    public function getErrors()
+    public function setUpdate($update)
     {
-        return $this->_errors;
+        $this->_update = $update;
     }
 
     /**
      * Обновление базы данных
      */
-    public function update()
+    public function import(array $translateArray)
     {
         $query = new Query;
         $transaction = $this->_db->beginTransaction();
         try {
             // Обходим каждую категорию
-            foreach ($this->_data as $category => &$messages) {
+            foreach ($translateArray as $category => &$messages) {
                 // обходим каждую константу
                 foreach ($messages as $constant => &$message) {
                     // Достаем константу с переводов в указанной категории
@@ -187,7 +114,7 @@ class DbMessageImporter
                         // Если такой перевод есть, небходимо его обновить
                         if ($selectTranslate) {
                             // Обновляем только в том случае, если действительно есть изменения
-                            if ($selectTranslate['translation'] !== $translate) {
+                            if ($selectTranslate['translation'] !== $translate && $this->_update) {
                                 $update = $this->_db->createCommand()
                                     ->update($this->_messageTable, ['translation' => $translate], ['id' => $constantId, 'language' => $lang])
                                     ->execute();
@@ -206,8 +133,7 @@ class DbMessageImporter
             return true;
         } catch (\Exception $e) {
             $transaction->rollBack();
-            $this->_errors = $e;
-            return false;
+            throw new InvalidParamException($e->getMessage());
         }
     }
 
