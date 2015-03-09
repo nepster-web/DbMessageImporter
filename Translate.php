@@ -67,12 +67,11 @@ class Translate extends \yii\console\Controller
                 case 'db':
                     assert(isset($this->config['db']['messageTable']));
                     assert(isset($this->config['db']['sourceMessageTable']));
-                    assert(isset($this->config['db']['connection']));
 
                     $this->_importer = new DbMessageImporter();
                     $this->_importer->setMessageTable($this->config['db']['messageTable']);
                     $this->_importer->setSourceMessageTable($this->config['db']['sourceMessageTable']);
-                    $this->_importer->setConnection($this->config['db']['connection']);
+                    $this->_importer->setConnection(isset($this->config['db']['connection']) ? $this->config['db']['connection'] : 'db');
                     $this->_importer->setUpdate($this->update);
                     break;
 
