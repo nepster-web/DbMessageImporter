@@ -94,7 +94,10 @@ class Translate extends \yii\console\Controller
                 $content = @file_get_contents($filePath);
                 $translateArray = Yaml::parse($content);
 
-                $import = $this->_importer->import($translateArray);
+                $import = false;
+                if (is_array($translateArray)) {
+                    $import = $this->_importer->import($translateArray);
+                }
 
                 if (is_array($import)) {
                     foreach ($import as $_filePath => $result) {
